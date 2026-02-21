@@ -386,7 +386,7 @@ function buildParams(
 type ClampedThinkingLevel = Exclude<ThinkingLevel, "xhigh">;
 
 function isGemini3ProModel(model: Model<"google-generative-ai">): boolean {
-	return model.id.includes("3-pro");
+	return model.id.includes("3-pro") || model.id.includes("3.1-pro");
 }
 
 function isGemini3FlashModel(model: Model<"google-generative-ai">): boolean {
@@ -397,7 +397,8 @@ function getGemini3ThinkingLevel(
 	effort: ClampedThinkingLevel,
 	model: Model<"google-generative-ai">,
 ): GoogleThinkingLevel {
-	if (isGemini3ProModel(model)) {
+	if (isGemini3ProModel(model) && !model.id.includes("3.1-pro")) {
+		// Original 3-pro collapses medium→HIGH (no MEDIUM support)
 		switch (effort) {
 			case "minimal":
 			case "low":
@@ -444,6 +445,16 @@ function getGoogleBudget(
 			low: 2048,
 			medium: 8192,
 			high: 24576,
+		};
+		return budgets[effort];
+	}
+
+	if (model.id.includes("3-pro") || model.id.includes("3.1-pro") || model.id.includes("3-flash")) {
+		const budgets: Record<ClampedThinkingLevel, number> = {
+			minimal: 1024,
+			low: 4096,
+			medium: 16384,
+			high: 65536,
 		};
 		return budgets[effort];
 	}
