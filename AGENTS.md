@@ -214,3 +214,5 @@ git pull --rebase && git push
 - Resolve conflicts in YOUR files only
 - If conflict is in a file you didn't modify, abort and ask the user
 - NEVER force push
+
+For shared documentation tools and cross-repository handoffs, follow [agent.md](agent.md).
